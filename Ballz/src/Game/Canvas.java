@@ -2,6 +2,6 @@ package Game;
 
 public class Canvas {
 	
-	public int a;
+	public int b;
 
 }
