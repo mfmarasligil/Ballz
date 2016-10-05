@@ -2,7 +2,7 @@ package Game;
 
 public class Canvas {
 
-	// HELLO sebastian
+	// Alan's work is better
 	public int d;
 
 }
