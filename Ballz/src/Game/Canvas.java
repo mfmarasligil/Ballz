@@ -1,8 +1,15 @@
 package Game;
 
-public class Canvas {
+import javax.swing.*;
+import java.awt.*;
 
-	// Alan's work is better again adklsfjal
-	public int d;
+public class Canvas extends JPanel {
+
+	public void paintComponent(Graphics g) {
+
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
+	}
 
 }
