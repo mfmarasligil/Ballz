@@ -7,6 +7,7 @@ public class Application extends JFrame {
 
     public JPanel panel;
 
+    /* Create the window */
     public void init() {
         Container cp = getContentPane();
         this.setTitle("Ball Maze");
