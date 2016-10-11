@@ -2,39 +2,80 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
+import java.util.TimerTask;
+import java.util.Timer;
 
-public class Application extends JFrame {
+import static java.lang.Thread.currentThread;
+import static java.lang.Thread.sleep;
 
-    public JPanel panel;
+/**
+ * Central class to create the window and the canvas.
+ * Loads and paints objects on that canvas.
+ */
+public class Application extends JPanel {
 
-    /* Create the window */
-    public void init() {
-        Container cp = getContentPane();
-        this.setTitle("Ball Maze");
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        panel = new JPanel();
-        cp.add(panel);
+    public static JFrame frame;
+    private Location ballLocation = new Location(0, 0);
+    private Ball ball = new Ball(ballLocation, 20, 20, new Color(255, 0, 0));
+
+    /* Framerate */
+    private static final int FRAMES_PER_SECOND = 1;
+    private static final int MS_TO_WAIT = 1000 / FRAMES_PER_SECOND; // I want 30 images per 1000 milliseconds so 1000 / 30 indicates after how many milliseconds I want to refresh
+    private Timer animationTimer;
+    private TimerTask animationTask;
+
+    public Application() {
+        animationTimer = new Timer("Ball Animation");
+        animationTask = new AnimationUpdator();
     }
 
-    public void paint(Graphics g) {
+    public void run() {
+        animationTimer.schedule(animationTask, 0, MS_TO_WAIT);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
         super.paintComponents(g);
-        g = this.panel.getGraphics();
         Graphics2D g2 = (Graphics2D) g;
-        Location ballLocation = new Location(0, 0);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Ball ball = new Ball(ballLocation, 20, 20);
+        // Clear the canvas
+        g.clearRect(0, 0, getWidth(), getHeight());
+        ball.setLocation((frame.getWidth()/2)-(ball.getWidth()/2), (frame.getHeight()/2)-(ball.getHeight()/2));
 
-        g2.setColor(new Color(255, 0, 0));
-        g2.fillOval(ball.getLocation().getX(), ball.getLocation().getY(), 10, 10);
+        // Paint the ball
+        g2.setColor(ball.getColor());
+        g2.fillOval(ball.getLocation().getX(), ball.getLocation().getY(), ball.getWidth(), ball.getHeight());
+    }
 
+    private class AnimationUpdator extends TimerTask {
+
+        @Override
+        public void run() {
+
+            Random r = new Random();
+            int Low = 0;
+            int High = 250;
+            int Result = r.nextInt(High-Low) + Low;
+
+            ball.setColor(new Color(Result, Result, Result));
+
+            repaint();
+        }
     }
 
     public static void main(String[] args) {
-        Application application = new Application();
-        application.init();
-        application.setSize(250, 200);
-        application.setVisible(true);
-        application.repaint();
+        frame = new JFrame("Ball maze");
+        Application panel = new Application();
+        frame.getContentPane().add(panel);
+        frame.setPreferredSize(new Dimension(250, 200));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+
+        panel.run();
     }
 
 }
