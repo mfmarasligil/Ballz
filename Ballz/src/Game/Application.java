@@ -2,44 +2,56 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
-import java.util.TimerTask;
-import java.util.Timer;
-
-import static java.lang.Thread.currentThread;
-import static java.lang.Thread.sleep;
 
 /**
  * Central class to create the window and the canvas.
  * Loads and paints objects on that canvas.
  */
+
+// Extends JPanel, so as to override the paintComponent() for custom rendering codes.
 public class Application extends JPanel {
 
+    // Initialise game window
     public static JFrame frame;
-    Application panel;
-    private Location ballLocation = new Location(0, 0);
-    private Ball ball = new Ball(ballLocation, 40, 40, new Color(255, 0, 0), INITIAL_X_VELOCITY, INITIAL_Y_VELOCITY);
 
-    /* Framerate */
-    private static final int FRAMES_PER_SECOND = 30;
-    private static final int MS_TO_WAIT = 1000 / FRAMES_PER_SECOND; // I want 30 images per 1000 milliseconds so 1000 / 30 indicates after how many milliseconds I want to refresh
-    private Timer animationTimer;
-    private TimerTask animationTask;
+    // Initialise a default ball for testing purposes
+    private Ball ball = new Ball();
 
-    private static final int INITIAL_Y_VELOCITY = 10;
-    private static final int INITIAL_X_VELOCITY = 5;
-    private static final double ACCELERATION = 1.1;
-    private static final double COEF_REST = 0.6;
+    // Animation variables
+    private static final int FRAME_RATE = 30;
 
+
+    // Application constructor creates UI components and initialises game objects
     public Application() {
-        animationTimer = new Timer("Ball Animation");
-        animationTask = new AnimationUpdator();
+        frame.getContentPane().setPreferredSize(new Dimension(250, 500));
+        frame.pack();
+
+        Thread gameThread = new Thread() {
+            public void run() {
+                while (true) { // Execute one update step
+
+                    // Each component should call it's update method
+                    ball.update();
+
+                    // Check if ball out of frame
+                    ball.check_in_bounds(0, 0, frame.getWidth(), frame.getHeight());
+
+                    // Repaint all the components on the frame
+                    repaint();
+
+                    // Delay for timing control and give other threads a chance
+                    try {
+                        Thread.sleep(1000 / FRAME_RATE);  // milliseconds
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+        };
+        gameThread.start(); // Callback run
     }
 
-    public void run() {
-        animationTimer.schedule(animationTask, 0, MS_TO_WAIT);
-    }
-
+    //
+    // Overriding paint method to paint all the components
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
@@ -49,60 +61,30 @@ public class Application extends JPanel {
 
         // Clear the canvas
         g.clearRect(0, 0, getWidth(), getHeight());
-        // ball.setLocation((frame.getWidth()/2)-(ball.getWidth()/2), (frame.getHeight()/2)-(ball.getHeight()/2));
 
         // Paint the ball
         g2.setColor(ball.getColor());
         g2.fillOval(ball.getLocation().getX(), ball.getLocation().getY(), ball.getWidth(), ball.getHeight());
     }
 
-    private class AnimationUpdator extends TimerTask {
 
-        @Override
-        public void run() {
-
-            // Make the ball fall and accelerate
-            double v2 = (ACCELERATION * 1) + ball.getVelocityY();
-            ball.setVelocityY(v2);
-
-            // Set canvas boundaries
-            int minX, maxX, minY, maxY;
-            minX = 0;
-            minY = 0;
-            maxX = (int) (frame.getWidth() - ball.getWidth());
-            maxY = (int) (frame.getHeight() - ball.getHeight()-23); // 23 for the bar at the top of the window/frame
-
-            // check frame boundaries
-            if(ball.getLocation().getY() > maxY) {
-
-                ball.setLocation(ball.getLocation().getX(), maxY);
-                ball.setVelocityY(-ball.getVelocityY()*COEF_REST);
-
-            } else if(ball.getLocation().getY() < minY) {
-                ball.setVelocityY(-ball.getVelocityY()*COEF_REST);
-
-            } else if(ball.getLocation().getX() < minX) {
-                ball.setVelocityX(-ball.getVelocityX()*COEF_REST);
-            } else if(ball.getLocation().getX() > maxX) {
-                ball.setVelocityX(-ball.getVelocityX()*COEF_REST);
-            }
-
-            ball.update();
-
-            repaint();
-        }
-    }
-
+    // Main method
     public static void main(String[] args) {
-        frame = new JFrame("Ball maze");
-        Application panel = new Application();
-        frame.getContentPane().add(panel);
-        frame.setPreferredSize(new Dimension(250, 500));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
 
-        panel.run();
+        // Run GUI in the Event Dispatcher Thread (EDT) instead of main thread.
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // Create JFrame and attach application
+                frame = new JFrame("Ball maze");
+                Application game = new Application();
+                frame.getContentPane().add(game);
+                frame.pack();
+                // Run house keeping on frame
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setVisible(true);
+
+            }
+        });
     }
 
 }
