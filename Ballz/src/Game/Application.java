@@ -30,11 +30,11 @@ public class Application extends JPanel {
             public void run() {
                 while (true) { // Execute one update step
 
+                    // Check if ball out of frame
+                    ball.check_in_bounds(0, 0, frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
+
                     // Each component should call it's update method
                     ball.update();
-
-                    // Check if ball out of frame
-                    ball.check_in_bounds(0, 0, frame.getWidth(), frame.getHeight());
 
                     // Repaint all the components on the frame
                     repaint();

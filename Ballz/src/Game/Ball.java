@@ -1,6 +1,7 @@
 package Game;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Ball class, sets the details for the ball and how it should update.
@@ -17,17 +18,22 @@ class Ball {
     private double velocityX;
     private double velocityY;
 
-    private static final double ACC = 0;
-    private static final double COEF_REST = 1;
+    private static final double ACC = 1;
+    private static final double COEF_REST = 0.6;
+
 
     // Default constructor
     Ball() {
-        this.location = new Location(0,0);
+
+        Random rand1 = new Random();
+        Random rand2 = new Random();
+
+        this.location = new Location(rand1.nextInt(250 - 0) + 0,rand2.nextInt(250 - 0) + 0);
         this.width = 40;
         this.height = 40;
         this.color = new Color(255, 0, 0);
-        this.velocityX = 5;
-        this.velocityY = 5;
+        this.velocityX = rand1.nextInt((10 - 0) + 1) + 0;
+        this.velocityY = rand2.nextInt((10 - 0) + 1) + 0;
 
     }
 
@@ -92,12 +98,16 @@ class Ball {
         int p_y2 = this.getLocation().getY() + (int)this.getVelocityY() + (int)(0.5*this.ACC);
 
         // calculate new velocity: (v2 = v1 + a*dt)
-        double v_y2 = this.getVelocityY() + this.ACC*this.getVelocityY();
+        // If it equals 0 then don't change it! AGAIN SHIT HACK
+        if(!(this.getVelocityY() == 0)) {
+            double v_y2 = this.getVelocityY() + this.ACC;
+            this.setVelocityY(v_y2);
+        }
+
         double v_x2 = this.getVelocityX();   // no acc in x direction
 
         // set new ball status
         this.setLocation(p_x2, p_y2);
-        this.setVelocityY(v_y2);
         this.setVelocityX(v_x2);
     }
 
@@ -109,19 +119,33 @@ class Ball {
             this.setVelocityY(-this.getVelocityY()*COEF_REST);
             this.setLocation(this.getLocation().getX(), minY);
         } else if(this.getLocation().getY() + this.getHeight() > maxY) {
-            this.setVelocityY(-(this.getVelocityY()*COEF_REST));
+            this.setVelocityY(-(this.getVelocityY())*COEF_REST);
             this.setLocation(this.getLocation().getX(), maxY - this.getHeight());
+            // Method to check if velocity less than certain value and then set to zero
+            // THIS FEELS LIKE A SHITTY HACK HAHA
+            if(Math.abs(this.getVelocityY()) < 3.5) {
+                this.setVelocityY(0);
+            }
+
         }
 
         // Check X dimension
         if(this.getLocation().getX() < minX) {
-            this.setVelocityX(-this.getVelocityX());
+            this.setVelocityX(-this.getVelocityX()*COEF_REST);
             this.setLocation(minX, this.getLocation().getY());
         } else if(this.getLocation().getX() + this.getWidth() > maxX) {
             this.setVelocityX(-this.getVelocityX()*COEF_REST);
             this.setLocation(maxX - this.getWidth(), this.getLocation().getY());
         }
 
+
+    }
+
+
+
+    void check_min_vel() {
+
+        // Check Y veloctiy
 
     }
 
