@@ -2,6 +2,8 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * Central class to create the window and the canvas.
@@ -25,6 +27,7 @@ public class Application extends JPanel {
     public Application() {
         frame.getContentPane().setPreferredSize(new Dimension(250, 500));
         frame.pack();
+        frame.setLocationRelativeTo(null); // centers the window
 
         Thread gameThread = new Thread() {
             public void run() {
@@ -82,6 +85,17 @@ public class Application extends JPanel {
                 // Run house keeping on frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
+                frame.addKeyListener(new KeyAdapter() {
+                    public void keyPressed(KeyEvent ke) {  // handler
+                        if(ke.getKeyCode() == ke.VK_ESCAPE) {
+                            System.out.println("escaped ?");
+                            System.exit(0);
+                        }
+                        else {
+                            System.out.println("not escaped");
+                        }
+                    }
+                });
 
             }
         });
