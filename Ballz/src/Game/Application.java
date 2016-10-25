@@ -15,6 +15,7 @@ public class Application extends JPanel {
 
     // Initialise game window
     public static JFrame frame;
+    public static Application game;
 
     // Initialise a default ball for testing purposes
     private Ball ball = new Ball();
@@ -22,13 +23,18 @@ public class Application extends JPanel {
     // Animation variables
     private static final int FRAME_RATE = 30;
 
+    // Game status
+    private static int gameState = 1;
+    /*
+    *
+    * 0: menu
+    * 1: game
+    *
+    * */
+
 
     // Application constructor creates UI components and initialises game objects
     public Application() {
-        frame.getContentPane().setPreferredSize(new Dimension(250, 500));
-        frame.pack();
-        frame.setLocationRelativeTo(null); // centers the window
-
         Thread gameThread = new Thread() {
             public void run() {
                while(true) { // Execute one update step
@@ -47,6 +53,7 @@ public class Application extends JPanel {
                         Thread.sleep(1000 / FRAME_RATE);  // milliseconds
                     } catch (InterruptedException ex) {
                     }
+
                 }
             }
         };
@@ -79,8 +86,23 @@ public class Application extends JPanel {
             public void run() {
                 // Create JFrame and attach application
                 frame = new JFrame("Ball maze");
-                Application game = new Application();
-                frame.getContentPane().add(game);
+                frame.getContentPane().setPreferredSize(new Dimension(250, 500));
+                frame.pack();
+                frame.setLocationRelativeTo(null); // centers the window
+
+                // Create the windows
+                HomeScreen homeScreen = new HomeScreen();
+                game = new Application();
+
+                // Depending on the game status show the game or the menu
+                if(gameState == 0) {
+                    frame.getContentPane().add(homeScreen);
+                } else if(gameState == 1) {
+                    frame.getContentPane().remove(homeScreen);
+                    frame.getContentPane().add(game);
+                }
+
+
                 frame.pack();
                 // Run house keeping on frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
