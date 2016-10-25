@@ -99,7 +99,7 @@ class Ball {
 
         // calculate new velocity: (v2 = v1 + a*dt)
         // If it equals 0 then don't change it! AGAIN SHIT HACK
-        if(!(this.getVelocityY() == 0)) {
+        if(this.getLocation().getY() < Application.frame.getContentPane().getSize().getHeight() - this.getHeight()) {
             double v_y2 = this.getVelocityY() + this.ACC;
             this.setVelocityY(v_y2);
         }
@@ -123,7 +123,7 @@ class Ball {
             this.setLocation(this.getLocation().getX(), maxY - this.getHeight());
             // Method to check if velocity less than certain value and then set to zero
             // THIS FEELS LIKE A SHITTY HACK HAHA
-            if(Math.abs(this.getVelocityY()) < 3.5) {
+            if(Math.abs(this.getVelocityY()) < 5) {
                 this.setVelocityY(0);
             }
 

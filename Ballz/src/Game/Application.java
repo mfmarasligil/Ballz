@@ -31,7 +31,7 @@ public class Application extends JPanel {
 
         Thread gameThread = new Thread() {
             public void run() {
-                while (true) { // Execute one update step
+               while(true) { // Execute one update step
 
                     // Check if ball out of frame
                     ball.check_in_bounds(0, 0, frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
@@ -88,11 +88,10 @@ public class Application extends JPanel {
                 frame.addKeyListener(new KeyAdapter() {
                     public void keyPressed(KeyEvent ke) {  // handler
                         if(ke.getKeyCode() == ke.VK_ESCAPE) {
-                            System.out.println("escaped ?");
                             System.exit(0);
                         }
                         else {
-                            System.out.println("not escaped");
+                            System.out.println("Failed to close window.");
                         }
                     }
                 });
