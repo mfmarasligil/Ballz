@@ -20,6 +20,7 @@ class Ball {
 
     private static final double ACC = 1;
     private static final double COEF_REST = 0.6;
+    private boolean toggle = true;
 
 
     // Default constructor
@@ -31,7 +32,7 @@ class Ball {
         this.location = new Location(rand1.nextInt(250 - 0) + 0,rand2.nextInt(250 - 0) + 0);
         this.width = 40;
         this.height = 40;
-        this.color = new Color(255, 0, 0);
+        this.color = new Color(241, 172, 63);
         this.velocityX = rand1.nextInt((10 - 0) + 1) + 0;
         this.velocityY = rand2.nextInt((10 - 0) + 1) + 0;
 
@@ -89,6 +90,16 @@ class Ball {
         return this.velocityX;
     }
 
+    public void changeColor() {
+        if(this.toggle) {
+            this.toggle = !this.toggle;
+            this.setColor(new Color(63, 137, 241));
+        } else {
+            this.toggle = !this.toggle;
+            this.setColor(new Color(241, 172, 63));
+        }
+    }
+
 
     // update the ball component
     void update() {
@@ -117,13 +128,16 @@ class Ball {
         // Check Y dimension
         if(this.getLocation().getY() < minY) {
             this.setVelocityY(-this.getVelocityY()*COEF_REST);
+
+            changeColor();
+
             this.setLocation(this.getLocation().getX(), minY);
         } else if(this.getLocation().getY() + this.getHeight() > maxY) {
             this.setVelocityY(-(this.getVelocityY())*COEF_REST);
+            changeColor();
             this.setLocation(this.getLocation().getX(), maxY - this.getHeight());
             // Method to check if velocity less than certain value and then set to zero
-            // THIS FEELS LIKE A SHITTY HACK HAHA
-            if(Math.abs(this.getVelocityY()) < 5) {
+            if(Math.abs(this.getVelocityY()) < 4.8) {
                 this.setVelocityY(0);
             }
 
@@ -132,21 +146,14 @@ class Ball {
         // Check X dimension
         if(this.getLocation().getX() < minX) {
             this.setVelocityX(-this.getVelocityX()*COEF_REST);
+            changeColor();
             this.setLocation(minX, this.getLocation().getY());
         } else if(this.getLocation().getX() + this.getWidth() > maxX) {
             this.setVelocityX(-this.getVelocityX()*COEF_REST);
+            changeColor();
             this.setLocation(maxX - this.getWidth(), this.getLocation().getY());
         }
 
 
     }
-
-
-
-    void check_min_vel() {
-
-        // Check Y veloctiy
-
-    }
-
 }

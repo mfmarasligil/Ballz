@@ -6,7 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 /**
- * Central class to create the window and the canvas.
+ * Central class to create the window and the canvas for the game.
  * Loads and paints objects on that canvas.
  */
 
@@ -16,22 +16,13 @@ public class Application extends JPanel {
     // Initialise game window
     public static JFrame frame;
     public static Application game;
+    public static HomeScreen homeScreen;
 
     // Initialise a default ball for testing purposes
     private Ball ball = new Ball();
 
     // Animation variables
     private static final int FRAME_RATE = 30;
-
-    // Game status
-    private static int gameState = 1;
-    /*
-    *
-    * 0: menu
-    * 1: game
-    *
-    * */
-
 
     // Application constructor creates UI components and initialises game objects
     public Application() {
@@ -86,27 +77,18 @@ public class Application extends JPanel {
             public void run() {
                 // Create JFrame and attach application
                 frame = new JFrame("Ball maze");
-                frame.getContentPane().setPreferredSize(new Dimension(250, 500));
+                frame.getContentPane().setPreferredSize(new Dimension(500, 350));
                 frame.pack();
                 frame.setLocationRelativeTo(null); // centers the window
 
-                // Create the windows
-                HomeScreen homeScreen = new HomeScreen();
-                game = new Application();
+                // Show the home screen
+                homeScreen = new HomeScreen();
+                frame.getContentPane().add(homeScreen);
 
-                // Depending on the game status show the game or the menu
-                if(gameState == 0) {
-                    frame.getContentPane().add(homeScreen);
-                } else if(gameState == 1) {
-                    frame.getContentPane().remove(homeScreen);
-                    frame.getContentPane().add(game);
-                }
-
-
-                frame.pack();
                 // Run house keeping on frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setVisible(true);
+                /*
+                Doesn't work anymore... does someone have a solution?
                 frame.addKeyListener(new KeyAdapter() {
                     public void keyPressed(KeyEvent ke) {  // handler
                         if(ke.getKeyCode() == ke.VK_ESCAPE) {
@@ -117,6 +99,9 @@ public class Application extends JPanel {
                         }
                     }
                 });
+                */
+                frame.pack();
+                frame.setVisible(true);
 
             }
         });
