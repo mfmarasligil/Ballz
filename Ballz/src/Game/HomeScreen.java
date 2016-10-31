@@ -50,7 +50,7 @@ public class HomeScreen extends JPanel {
         newGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Application.frame.getContentPane().setPreferredSize(new Dimension(350, 500));
+                Application.frame.getContentPane().setPreferredSize(new Dimension(500, 350));
                 Application.frame.getContentPane().remove(Application.homeScreen);
                 Application.game = new Application();
                 Application.frame.getContentPane().add(Application.game);

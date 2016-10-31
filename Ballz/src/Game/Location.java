@@ -3,6 +3,11 @@ package Game;
 /**
  * Created by sebastianjohnvonfreyend on 06/10/2016.
  */
+
+/**
+ * I don't really like this, I feel like the location class just overcomplicates and doesn't give
+ * us much extra functionality, do you think we can chop it?
+ */
 public class Location {
 
     private int x;

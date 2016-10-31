@@ -2,8 +2,6 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 /**
  * Central class to create the window and the canvas for the game.
@@ -18,8 +16,13 @@ public class Application extends JPanel {
     public static Application game;
     public static HomeScreen homeScreen;
 
-    // Initialise a default ball for testing purposes
+    // Initialise a new ball
     private Ball ball = new Ball();
+
+    // Initialise some blocks
+    private Block block1 = new Block(ball.getWidth());
+    private Block block2 = new Block(ball.getWidth());
+    private Block block3 = new Block(ball.getWidth());
 
     // Animation variables
     private static final int FRAME_RATE = 30;
@@ -28,13 +31,14 @@ public class Application extends JPanel {
     public Application() {
         Thread gameThread = new Thread() {
             public void run() {
-               while(true) { // Execute one update step
+                while(true) {
 
-                    // Check if ball out of frame
-                    ball.check_in_bounds(0, 0, frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
-
-                    // Each component should call it's update method
+                    // Execute one update step
                     ball.update();
+                    ball.checkInFrame();
+                    ball.checkMechIntersection(block1);
+                    ball.checkMechIntersection(block2);
+                    ball.checkMechIntersection(block3);
 
                     // Repaint all the components on the frame
                     repaint();
@@ -63,9 +67,16 @@ public class Application extends JPanel {
         // Clear the canvas
         g.clearRect(0, 0, getWidth(), getHeight());
 
-        // Paint the ball
-        g2.setColor(ball.getColor());
-        g2.fillOval(ball.getLocation().getX(), ball.getLocation().getY(), ball.getWidth(), ball.getHeight());
+        // Paint the new ball
+        g2.setColor(new Color(241, 172, 63));
+        ball.draw(g2);
+
+        // Paint the blocks
+        g2.setColor(new Color(63, 137, 241));
+        block1.draw(g2);
+        block2.draw(g2);
+        block3.draw(g2);
+
     }
 
 
@@ -75,6 +86,7 @@ public class Application extends JPanel {
         // Run GUI in the Event Dispatcher Thread (EDT) instead of main thread.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+
                 // Create JFrame and attach application
                 frame = new JFrame("Ball maze");
                 frame.getContentPane().setPreferredSize(new Dimension(500, 350));
