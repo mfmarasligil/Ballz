@@ -78,7 +78,7 @@ public class Ball extends Ellipse2D.Double{
         if(this.intersects(mech)) {
 
             // check if ball is on top of mech
-            if (this.getMinY() < mech.getMinY()) {
+            if (this.getMinY() < mech.getMinY() && !(this.getMaxY() > mech.getMaxY())) {
                 this.y_vel = this.y_vel * -1 * this.COEF_REST;
                 this.y = mech.getMinY() - this.getHeight();
 

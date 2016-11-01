@@ -9,6 +9,10 @@ import java.awt.*;
 // Used java.awt.shape rectangle as the extended class but not sure if it's best
 public class Block extends Rectangle {
 
+    // Initialise interface controls
+    private boolean dragging = false;
+    public Point initLoc;
+
     // Relative constructor for horizontal blocks at random points on the screen
     Block(double ballRadius){
 
@@ -22,10 +26,19 @@ public class Block extends Rectangle {
 
     }
 
+    void setDragging(boolean state){
+        this.dragging = state;
+    }
+
+    boolean getDragging(){
+        return this.dragging;
+    }
+
     // Draw method to correctly paint the component on the screen
     void draw(Graphics2D g2){
         g2.fillRect(this.x, this.y, this.width, this.height);
 
     }
+
 
 }

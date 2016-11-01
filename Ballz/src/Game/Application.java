@@ -2,14 +2,18 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseEvent;
 
 /**
  * Central class to create the window and the canvas for the game.
  * Loads and paints objects on that canvas.
  */
 
+
 // Extends JPanel, so as to override the paintComponent() for custom rendering codes.
-public class Application extends JPanel {
+public class Application extends JPanel implements MouseListener, MouseMotionListener {
 
     // Initialise game window
     public static JFrame frame;
@@ -21,14 +25,19 @@ public class Application extends JPanel {
 
     // Initialise some blocks
     private Block block1 = new Block(ball.getWidth());
-    private Block block2 = new Block(ball.getWidth());
-    private Block block3 = new Block(ball.getWidth());
 
     // Animation variables
     private static final int FRAME_RATE = 30;
 
+    // Interface variables
+    private Point clickLoc;
+
     // Application constructor creates UI components and initialises game objects
     public Application() {
+
+        addMouseListener(this);
+        addMouseMotionListener(this);
+
         Thread gameThread = new Thread() {
             public void run() {
                 while(true) {
@@ -37,8 +46,6 @@ public class Application extends JPanel {
                     ball.update();
                     ball.checkInFrame();
                     ball.checkMechIntersection(block1);
-                    ball.checkMechIntersection(block2);
-                    ball.checkMechIntersection(block3);
 
                     // Repaint all the components on the frame
                     repaint();
@@ -74,11 +81,60 @@ public class Application extends JPanel {
         // Paint the blocks
         g2.setColor(new Color(63, 137, 241));
         block1.draw(g2);
-        block2.draw(g2);
-        block3.draw(g2);
 
     }
 
+    // Mouse control methods for interaction
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+        // Store location of click
+        clickLoc = e.getPoint();
+
+        if(block1.contains(clickLoc)){
+            block1.setDragging(true);
+
+            // Record the position of the block when first selected
+            block1.initLoc = block1.getLocation();
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if(block1.getDragging()){
+
+            // Find the distance moved
+            double dx = clickLoc.getX() - e.getX();
+            double dy = clickLoc.getY() - e.getY();
+
+            int moveX = (int)(block1.initLoc.getX() -dx);
+            int moveY = (int)(block1.initLoc.getY() -dy);
+
+            // Set new location for the block as a result of interaction
+            block1.setLocation(moveX, moveY);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        block1.setDragging(false);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e){
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e){
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e){
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e){
+    }
 
     // Main method
     public static void main(String[] args) {
@@ -99,6 +155,7 @@ public class Application extends JPanel {
 
                 // Run house keeping on frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
                 /*
                 Doesn't work anymore... does someone have a solution?
                 frame.addKeyListener(new KeyAdapter() {
@@ -111,6 +168,7 @@ public class Application extends JPanel {
                         }
                     }
                 });
+
                 */
                 frame.pack();
                 frame.setVisible(true);
