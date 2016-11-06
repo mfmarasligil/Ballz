@@ -2,6 +2,13 @@ package Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 
 /**
  * Central class to create the window and the canvas for the game.
@@ -9,7 +16,7 @@ import java.awt.*;
  */
 
 // Extends JPanel, so as to override the paintComponent() for custom rendering codes.
-public class Application extends JPanel {
+public class Application extends JPanel implements MouseMotionListener {
 
     // Initialise game window
     public static JFrame frame;
@@ -19,16 +26,23 @@ public class Application extends JPanel {
     // Initialise a new ball
     private Ball ball = new Ball();
 
-    // Initialise some blocks
-    private Block block1 = new Block(ball.getWidth());
-    private Block block2 = new Block(ball.getWidth());
-    private Block block3 = new Block(ball.getWidth());
+    // List of blocks
+    private ArrayList<Block> blockList;
+    Block block1 = new Block(ball.getWidth());
+    Block block2 = new Block(ball.getWidth());
+    Block block3 = new Block(ball.getWidth());
+    RubberBlock block4 = new RubberBlock(ball.getWidth());
 
     // Animation variables
     private static final int FRAME_RATE = 30;
 
-    // Application constructor creates UI components and initialises game objects
+    /**
+     * Application constructor creates UI components and initialises game objects
+     */
     public Application() {
+        // Add the mouse motion listener as defined in the function below
+        this.addMouseMotionListener(this);
+
         Thread gameThread = new Thread() {
             public void run() {
                 while(true) {
@@ -36,9 +50,11 @@ public class Application extends JPanel {
                     // Execute one update step
                     ball.update();
                     ball.checkInFrame();
+
                     ball.checkMechIntersection(block1);
                     ball.checkMechIntersection(block2);
                     ball.checkMechIntersection(block3);
+                    ball.checkMechIntersection(block4);
 
                     // Repaint all the components on the frame
                     repaint();
@@ -52,11 +68,15 @@ public class Application extends JPanel {
                 }
             }
         };
+
         gameThread.start(); // Callback run
     }
 
-    //
-    // Overriding paint method to paint all the components
+
+    /**
+     * Overriding paint method to paint all the components
+     * @param g Graphics object
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
@@ -77,8 +97,22 @@ public class Application extends JPanel {
         block2.draw(g2);
         block3.draw(g2);
 
+        block4.draw(g2);
     }
 
+    /**
+     * Adds points to the points ArrayList in order for the eraser block to work
+     * @param e
+     */
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        block4.addPoint(e.getPoint());
+    }
+
+    // Not used
+    @Override
+    public void mouseMoved(MouseEvent e) {
+    }
 
     // Main method
     public static void main(String[] args) {
@@ -99,24 +133,9 @@ public class Application extends JPanel {
 
                 // Run house keeping on frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                /*
-                Doesn't work anymore... does someone have a solution?
-                frame.addKeyListener(new KeyAdapter() {
-                    public void keyPressed(KeyEvent ke) {  // handler
-                        if(ke.getKeyCode() == ke.VK_ESCAPE) {
-                            System.exit(0);
-                        }
-                        else {
-                            System.out.println("Failed to close window.");
-                        }
-                    }
-                });
-                */
                 frame.pack();
                 frame.setVisible(true);
-
             }
         });
     }
-
 }

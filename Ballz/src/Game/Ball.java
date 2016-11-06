@@ -43,7 +43,7 @@ public class Ball extends Ellipse2D.Double{
 
 
     // Update method to move the ball
-    void update(){
+    void update() {
 
         // Calculate the new position
         this.x = this.x + this.x_vel;
@@ -56,7 +56,7 @@ public class Ball extends Ellipse2D.Double{
 
 
     // Check if ball outside frame boundary and adjust accordingly
-    void checkInFrame(){
+    void checkInFrame() {
 
         // Get the current content frame size
         int max_X = Application.frame.getContentPane().getWidth();
@@ -73,7 +73,7 @@ public class Ball extends Ellipse2D.Double{
 
 
     // Check if ball intersects mechanism and adjust accordingly
-    void checkMechIntersection(Rectangle2D mech){
+    void checkMechIntersection(Rectangle2D mech) {
 
         if(this.intersects(mech)) {
 
@@ -109,12 +109,26 @@ public class Ball extends Ellipse2D.Double{
         }
     }
 
+    /**
+     * Check intersection with an erase block.
+     * @param mech
+     */
+    void checkMechIntersection(RubberBlock mech) {
 
-    // Draw method: correctly draw the ball on the frame
-    void draw(Graphics2D g2){
-        g2.fill(this);
+        // Check if the ball intersects with the bounding Box of the drawn path and let it fall
+        if(this.intersects(mech.getPath().getBounds())) {
+            // Let it fall
+        } else {
+            // Check intersection with the block inside RubberBlock
+            checkMechIntersection(mech.getBlock());
+        }
 
     }
 
 
+    // Draw method: correctly draw the ball on the frame
+    void draw(Graphics2D g2) {
+        g2.fill(this);
+
+    }
 }

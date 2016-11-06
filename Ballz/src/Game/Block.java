@@ -27,5 +27,4 @@ public class Block extends Rectangle {
         g2.fillRect(this.x, this.y, this.width, this.height);
 
     }
-
 }
